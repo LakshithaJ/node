@@ -1,17 +1,38 @@
 const http = require('http');
 const fs = require('fs');
 
-const server = http.createServer((req, res) =>{
-
+const server = http.createServer((req, res) => {
     // set the response headers
     res.setHeader('Content-Type', 'text/html');
 
+    let path = './views/';
+
+    switch (req.url) {
+        case '/':
+            path += 'index.html';
+            res.statusCode = 200;
+            break;
+        case '/about':
+            path += 'about.html';
+            res.statusCode = 200;
+            break;
+        case '/about-me':
+            res.statusCode = 301;
+            res.setHeader('Location', '/about');
+            res.end();
+            break;
+        default:
+            path += '404.html';
+            res.statusCode = 404;
+            break;
+    }
+
     // send an html response
-    fs.readFile('./views/index.html', (err, data) =>{
-        if(err){
+    fs.readFile(path, (err, data) => {
+        if (err) {
             console.log('error', err);
             res.end();
-        }else{
+        } else {
             // res.write(data); // no need to write data like this if you have a single file, just sent it in the res.end() method
             res.end(data);
         }
